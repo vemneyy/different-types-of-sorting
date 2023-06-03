@@ -53,7 +53,7 @@ int main()
     measureSortingTime("BubbleSort", bubbleSort, arr, backup, SIZE, &sorts[0]);
     measureSortingTime("CocktailSort", cocktailSort, arr, backup, SIZE, &sorts[1]);
     measureSortingTime("GnomeSort", gnomeSort, arr, backup, SIZE, &sorts[2]);
-    measureSortingTime("QuickSort", quickSort, arr, backup, SIZE, &sorts[3]);
+    measureSortingTime("QuickSort", quickSortWrapper, arr, backup, SIZE, &sorts[3]);
     measureSortingTime("HeapSort", heapSort, arr, backup, SIZE, &sorts[4]);
 
     // Сортировка методов по времени выполнения
@@ -172,3 +172,8 @@ void heapify(int arr[], int n, int i)
         heapify(arr, n, largest);
     }
 }
+
+void quickSortWrapper(int* arr, int n) {
+    quickSort(arr, 0, n - 1);
+}
+
