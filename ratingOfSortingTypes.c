@@ -36,6 +36,10 @@ void measureSortingTime(char *name, void (*sortFunc)(int *, int), int arr[], int
     strcpy(sortStruct->name, name);
 }
 
+void quickSortWrapper(int* arr, int n) {
+    quickSort(arr, 0, n - 1);
+}
+
 int main()
 {
     int arr[SIZE], backup[SIZE];
@@ -172,8 +176,3 @@ void heapify(int arr[], int n, int i)
         heapify(arr, n, largest);
     }
 }
-
-void quickSortWrapper(int* arr, int n) {
-    quickSort(arr, 0, n - 1);
-}
-
