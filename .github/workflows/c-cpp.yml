@@ -21,13 +21,3 @@ jobs:
       run: make check
     - name: make distcheck
       run: make distcheck
-
-TARGET = sorting_test
-
-all: $(TARGET)
-
-$(TARGET): main.c
-	$(CC) $(CFLAGS) -o $(TARGET) ratingOfSortingTypes.c
-
-clean:
-	$(RM) $(TARGET)
