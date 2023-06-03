@@ -21,12 +21,19 @@ typedef struct {
     int time; // переменная для хранения времени выполнения сортировки
 } Sort;
 
-// Функция используется в функции qsort для упорядочивания методов сортировки по времени выполнения
 int compare(const void* a, const void* b) {
-    // приведение указателей типа "void" к указателям на структуру "Sort"
-    // затем из поля "time" каждой структуры вычитается время другого, получая результат сравнения
-    // если результат положительный, первый элемент больше второго, если отрицательный - меньше, если ноль - они равны
     return ((Sort*)a)->time - ((Sort*)b)->time;
+}
+
+// Функция для замера времени выполнения сортировки
+void measureSortingTime(char *name, void (*sortFunc)(int *, int), int arr[], int backup[], int n, Sort *sortStruct) {
+    memcpy(arr, backup, sizeof(int) * n);
+    clock_t start = clock();
+    sortFunc(arr, n);
+    clock_t end = clock();
+    sortStruct->time = (int)(((double)(end - start)) / CLOCKS_PER_SEC * 1000);
+    printf("Time of %s: %d milliseconds\n", name, sortStruct->time);
+    strcpy(sortStruct->name, name);
 }
 
 int main()
@@ -34,74 +41,25 @@ int main()
     int arr[SIZE], backup[SIZE];
     Sort sorts[5];
     srand(time(0));
-    srand(time(0));
 
     printf("Size of array: %d\n", SIZE);
 
-    // заполнение массива случайными числами и создание резервной копии
+    // Заполнение массива случайными числами и создание резервной копии
     for (int i = 0; i < SIZE; i++) {
-        arr[i] = rand() % 1000;
-        backup[i] = arr[i];
+        backup[i] = arr[i] = rand() % 1000;
     }
 
-    // секундомер для замера
-    clock_t start, end;
-    double cpu_time_used;
+    // замер времени для различных сортировок
+    measureSortingTime("BubbleSort", bubbleSort, arr, backup, SIZE, &sorts[0]);
+    measureSortingTime("CocktailSort", cocktailSort, arr, backup, SIZE, &sorts[1]);
+    measureSortingTime("GnomeSort", gnomeSort, arr, backup, SIZE, &sorts[2]);
+    measureSortingTime("QuickSort", quickSort, arr, backup, SIZE, &sorts[3]);
+    measureSortingTime("HeapSort", heapSort, arr, backup, SIZE, &sorts[4]);
 
-    // пузырьковая сортировка
-    start = clock();
-    bubbleSort(arr, SIZE);
-    end = clock();
-    sorts[0].time = (int)(((double)(end - start)) / CLOCKS_PER_SEC * 1000);
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
-    printf("\nTime of BubbleSort: %f milliseconds\n", cpu_time_used);
-    strcpy(sorts[0].name, "BubbleSort");
-
-    // сортировка перемешиванием
-    for (int i = 0; i < SIZE; i++) arr[i] = backup[i];
-    start = clock();
-    cocktailSort(arr, SIZE);
-    end = clock();
-    sorts[1].time = (int)(((double)(end - start)) / CLOCKS_PER_SEC * 1000);
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
-    printf("Time of CocktailSort: %f milliseconds\n", cpu_time_used);
-    strcpy(sorts[1].name, "CocktailSort");
-
-    // гномья сортировка
-    for (int i = 0; i < SIZE; i++) arr[i] = backup[i];
-    start = clock();
-    gnomeSort(arr, SIZE);
-    end = clock();
-    sorts[2].time = (int)(((double)(end - start)) / CLOCKS_PER_SEC * 1000);
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
-    printf("Time of GnomeSort: %f milliseconds\n", cpu_time_used);
-    strcpy(sorts[2].name, "GnomeSort");
-
-    // быстрая сортировка
-    for (int i = 0; i < SIZE; i++) arr[i] = backup[i];
-    start = clock();
-    quickSort(arr, 0, SIZE - 1);
-    end = clock();
-    sorts[3].time = (int)(((double)(end - start)) / CLOCKS_PER_SEC * 1000);
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
-    printf("Time of QuickSort: %f milliseconds\n", cpu_time_used);
-    strcpy(sorts[3].name, "QuickSort");
-
-    // пирамидальная сортировка
-    for (int i = 0; i < SIZE; i++) arr[i] = backup[i];
-    start = clock();
-    heapSort(arr, SIZE);
-    end = clock();
-    sorts[4].time = (int)(((double)(end - start)) / CLOCKS_PER_SEC * 1000);
-    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
-    printf("Time of HeapSort: %f milliseconds\n", cpu_time_used);
-    strcpy(sorts[4].name, "HeapSort");
-
-    // сортировка методов по времени выполнения
+    // Сортировка методов по времени выполнения
     qsort(sorts, 5, sizeof(Sort), compare);
-    printf("\n");
-    
-    // вывод таблицы
+
+    // Вывод таблицы
     for (int i = 0; i < 5; i++)
         printf("%d. %s - (time of sort: %d milliseconds)\n", i+1, sorts[i].name, sorts[i].time);
 
